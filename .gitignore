@@ -72,3 +72,9 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# Rider cache
+.idea/*
+/Plugins/Developer/RiderLink
+/!Art
+/!Builds

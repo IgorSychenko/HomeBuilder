@@ -53,15 +53,20 @@ void UBuildingComponent::CreateConstruct()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = GetOwner();
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		const FVector SpawnLocation = GetOwner()->GetActorLocation();
-		const FRotator SpawnRotation = GetOwner()->GetActorRotation();
-		
-		AActor* NewActor = GetWorld()->SpawnActor<AActor>(ConstructActorClass, SpawnLocation, SpawnRotation, SpawnParams);
-		if (NewActor)
+
+		// Find location
+		FVector SpawnLocation = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * OffsetConstructPosition;
+		FHitResult OutHit;
+		const FVector Start = SpawnLocation;
+		const FVector End = Start + FVector(0.0f, 0.0f, -1000.0f);
+
+		if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_Pawn, FCollisionQueryParams()))
 		{
-			
+			SpawnLocation = OutHit.Location;
 		}
-		else
+		
+		AActor* NewActor = GetWorld()->SpawnActor<AActor>(ConstructActorClass, SpawnLocation, GetOwner()->GetActorRotation(), SpawnParams);
+		if (!NewActor)
 		{
 			UE_LOG(LogTemp, Error, TEXT("UBuildingComponent::CreateConstruct. Error actor creating!"));
 		}

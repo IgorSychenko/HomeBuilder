@@ -19,6 +19,9 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BuildingComponent|Construct", meta = (ClampMin = "0", UIMin = "0"))
 	float ProgressCompleteTime = 2.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BuildingComponent|Construct", meta = (ClampMin = "0", UIMin = "0"))
+	float OffsetConstructPosition = 50.0f;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BuildingComponent|Construct")
 	TSubclassOf<AActor> ConstructActorClass;

@@ -3,19 +3,36 @@
 
 #include "Home.h"
 #include "HomeBuilder/Components/ResourceComponentProduction.h"
+#include "Components/WidgetComponent.h"
+#include "HomeBuilder/UI/ResourceWidget.h"
 
 // Sets default values
 AHome::AHome()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+	
+	RootComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Root"));
 
 	ResourceComponentProduction = CreateDefaultSubobject<UResourceComponentProduction>(TEXT("ResourceComponentProduction"));
+	
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetResource"));
+	WidgetComponent->SetupAttachment(RootComponent);
+	WidgetComponent->SetWidgetClass(UResourceWidget::StaticClass());
+	
 }
 
 // Called when the game starts or when spawned
 void AHome::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (auto ResourceWidget = Cast<UResourceWidget>(WidgetComponent->GetUserWidgetObject()))
+	{
+		ResourceWidget->Init(this);
+	}
+}
+
+UResourceComponent* AHome::GetResourceComponent_Implementation() const
+{
+	return Cast<UResourceComponent>(ResourceComponentProduction);
 }

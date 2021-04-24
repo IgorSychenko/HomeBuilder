@@ -6,12 +6,12 @@
 UResourceComponentProduction::UResourceComponentProduction()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-	
+	PrimaryComponentTick.TickInterval = 1.0f;
 }
 
 void UResourceComponentProduction::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	IResourceComponentSupport::Execute_ChangeCurrentResource(this, ResourceChangePerTick);
+	ChangeCurrentResource(ResourceChangePerTick);
 }

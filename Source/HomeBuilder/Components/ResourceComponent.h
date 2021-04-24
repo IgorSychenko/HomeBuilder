@@ -4,14 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "HomeBuilder/Interfaces/ResourceComponentSupport.h"
 #include "ResourceComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FResourceChange);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class HOMEBUILDER_API UResourceComponent
-	: public UActorComponent
-	, public IResourceComponentSupport
+class HOMEBUILDER_API UResourceComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -20,18 +18,25 @@ public:
 	UResourceComponent();
 
 protected:
-	int32 CurrentResource;
+	int32 CurrentResource = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ResourceComponent|Resource")
 	int32 MaxResource = 100;
 
-public:	
+	public:
+	UFUNCTION(BlueprintPure, Category = "ResourceComponent|Resource")
+	FORCEINLINE int32 GetCurrentResource() const { return CurrentResource; }
+	
+	UFUNCTION(BlueprintPure, Category = "ResourceComponent|Resource")
+	FORCEINLINE int32 GetMaxResource() const { return MaxResource; }
+	
+	UFUNCTION(BlueprintPure, Category = "ResourceComponent|Resource")
+	FORCEINLINE float GetRatio() const { return static_cast<float>(CurrentResource) / static_cast<float>(MaxResource); }
+	
+	UFUNCTION(BlueprintCallable, Category = "ResourceComponent|Resource")
+	void ChangeCurrentResource(int32 Change);
 
-	// IResourceComponentSupport Begin
-	virtual int32 GetCurrentResource_Implementation() const override;
-	virtual int32 GetMaxResource_Implementation() const override;
-	virtual float GetRatio_Implementation() const override;
-	virtual void ChangeCurrentResource_Implementation(int32 Change) override;
-	// IResourceComponentSupport End
+	UPROPERTY(BlueprintAssignable, Category = "ResourceComponent|Resource")
+	FResourceChange OnResourceChange;
 		
 };

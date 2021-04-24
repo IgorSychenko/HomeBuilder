@@ -4,12 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "HomeBuilder/Interfaces/ResourceComponentSupport.h"
 #include "Home.generated.h"
 
 class UResourceComponentProduction;
+class UWidgetComponent;
 
 UCLASS()
-class HOMEBUILDER_API AHome : public AActor
+class HOMEBUILDER_API AHome
+	: public AActor
+	, public IResourceComponentSupport
 {
 	GENERATED_BODY()
 	
@@ -21,5 +25,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ResourceComponent")
 	UResourceComponentProduction* ResourceComponentProduction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WidgetComponent")
+	UWidgetComponent* WidgetComponent;
+
+	// IResourceComponentSupport Begin
+	virtual UResourceComponent* GetResourceComponent_Implementation() const override;
+	// IResourceComponentSupport End
 
 };

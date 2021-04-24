@@ -6,6 +6,8 @@
 #include "UObject/Interface.h"
 #include "ResourceComponentSupport.generated.h"
 
+class UResourceComponent;
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UResourceComponentSupport : public UInterface
@@ -22,16 +24,6 @@ class HOMEBUILDER_API IResourceComponentSupport
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-
-	UFUNCTION(BlueprintNativeEvent, Category = "ResourceComponent|Resource")
-	int32 GetCurrentResource() const;
-
-	UFUNCTION(BlueprintNativeEvent, Category = "ResourceComponent|Resource")
-	int32 GetMaxResource() const;
-
-	UFUNCTION(BlueprintNativeEvent, Category = "ResourceComponent|Resource")
-	float GetRatio() const;
-	
-	UFUNCTION(BlueprintNativeEvent, Category = "ResourceComponent|Resource")
-    void ChangeCurrentResource(int32 Change);
+	UFUNCTION(BlueprintNativeEvent, Category = "ResourceComponent")
+	UResourceComponent* GetResourceComponent() const;
 };

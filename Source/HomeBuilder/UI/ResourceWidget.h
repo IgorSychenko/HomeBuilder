@@ -7,6 +7,8 @@
 #include "ResourceWidget.generated.h"
 
 class UResourceComponent;
+class UProgressBar;
+class UTextBlock;
 
 /**
  * 
@@ -24,15 +26,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "ResourceWidget|ResourceComponent")
 	FORCEINLINE UResourceComponent* GetOwnerResourceComponent() const { return OwnerResourceComponent; }
 
-	UFUNCTION(BlueprintCallable, Category = "ResourceWidget|ResourceComponent")
+	UFUNCTION(BlueprintCallable, Category = "ResourceWidget")
 	void UpdateWidget();
 
 protected:
-	UPROPERTY (meta = (BindWidget))
-	class UProgressBar* ResourceBar;
+	UPROPERTY(meta = (BindWidget))
+	UProgressBar* ResourceBar;
 
-	UPROPERTY (meta = (BindWidget))
-	class UTextBlock* ResourceText;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* ResourceText;
 
 private:
 	UPROPERTY()

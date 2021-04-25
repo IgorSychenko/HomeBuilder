@@ -5,11 +5,13 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "HomeBuilder/Components/BuildingComponent.h"
 #include "HomeBuilder/Components/ResourceComponent.h"
+#include "HomeBuilder/Interfaces/ResourceComponentSupport.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AHomeBuilderCharacter
@@ -50,6 +52,8 @@ AHomeBuilderCharacter::AHomeBuilderCharacter()
 
 	ResourceComponent = CreateDefaultSubobject<UResourceComponent>(TEXT("ResourceComponent"));
 	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>(TEXT("BuildingComponent"));
+	ContactSphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("ContactSphereComponent"));
+	ContactSphereComponent->SetupAttachment(RootComponent); 
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -79,6 +83,8 @@ void AHomeBuilderCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 
 	// VR headset functionality
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AHomeBuilderCharacter::OnResetVR);
+	
+	PlayerInputComponent->BindAction("TakeResource", IE_Pressed, this, &AHomeBuilderCharacter::TakeResource);
 }
 
 
@@ -135,5 +141,57 @@ void AHomeBuilderCharacter::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+	}
+}
+
+void AHomeBuilderCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	ContactSphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AHomeBuilderCharacter::OnContactOverlapBegin);
+	ContactSphereComponent->OnComponentEndOverlap.AddDynamic(this, &AHomeBuilderCharacter::OnContactOverlapEnd);
+}
+
+UResourceComponent* AHomeBuilderCharacter::GetResourceComponent_Implementation() const
+{
+	return ResourceComponent;
+}
+
+void AHomeBuilderCharacter::OnContactOverlapBegin(UPrimitiveComponent* OverlapedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 BodyIndex, bool Sweep, const FHitResult& Hit)
+{
+	if (OtherActor != this && OtherActor->GetClass()->ImplementsInterface(UResourceComponentSupport::StaticClass()))
+	{
+		ContactActors.AddUnique(OtherActor);
+		OnContactArrayChanged.Broadcast();
+	}
+}
+
+void AHomeBuilderCharacter::OnContactOverlapEnd(UPrimitiveComponent* OverlapedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 BodyIndex)
+{
+	ContactActors.Remove(OtherActor);
+	OnContactArrayChanged.Broadcast();
+}
+
+void AHomeBuilderCharacter::TakeResource()
+{
+	for (auto actor : ContactActors)
+	{
+		if (actor->GetClass()->ImplementsInterface(UResourceComponentSupport::StaticClass()))
+		{
+			auto ActorResourceComponent = IResourceComponentSupport::Execute_GetResourceComponent(actor);
+			auto OwnerResourceComponent = IResourceComponentSupport::Execute_GetResourceComponent(this);
+			const int32 MaxRes = ActorResourceComponent->GetCurrentResource();
+			if (MaxRes > OwnerResourceComponent->GetMaxResource() - OwnerResourceComponent->GetCurrentResource())
+			{
+				const int32 Delta = OwnerResourceComponent->GetMaxResource() - OwnerResourceComponent->GetCurrentResource();
+				ActorResourceComponent->ChangeCurrentResource(-Delta);
+				OwnerResourceComponent->ChangeCurrentResource(Delta);
+			}
+			else
+			{
+				ActorResourceComponent->ChangeCurrentResource(-MaxRes);
+				OwnerResourceComponent->ChangeCurrentResource(MaxRes);
+			}
+		}
 	}
 }

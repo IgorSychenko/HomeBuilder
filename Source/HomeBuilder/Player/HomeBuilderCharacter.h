@@ -4,13 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "HomeBuilder/Interfaces/ResourceComponentSupport.h"
 #include "HomeBuilderCharacter.generated.h"
 
+class USphereComponent;
 class UBuildingComponent;
 class UResourceComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FContactArrayChanged);
+
 UCLASS(config=Game)
-class AHomeBuilderCharacter : public ACharacter
+class AHomeBuilderCharacter
+	: public ACharacter
+	, public IResourceComponentSupport
 {
 	GENERATED_BODY()
 
@@ -72,11 +78,42 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+public:
+	virtual void BeginPlay() override;
+
+	// IResourceComponentSupport Begin
+	virtual UResourceComponent* GetResourceComponent_Implementation() const override;
+	// IResourceComponentSupport End
+	
+	UFUNCTION(BlueprintPure, Category = "HomeBuilderCharacter|ResourceComponent")
+	FORCEINLINE UBuildingComponent* GetBuildingComponent() const { return BuildingComponent; }
+	
+	UFUNCTION(BlueprintCallable, Category = "HomeBuilderCharacter|ResourceComponent")
+	void TakeResource();
+	
+	UFUNCTION(BlueprintCallable, Category = "HomeBuilderCharacter|ResourceComponent")
+	FORCEINLINE bool CanTakeResource() { return ContactActors.Num() > 0; }
+
+	UPROPERTY(BlueprintAssignable, Category = "ContactSphereComponent")
+	FContactArrayChanged OnContactArrayChanged;
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ResourceComponent")
 	UResourceComponent* ResourceComponent;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BuildingComponent")
 	UBuildingComponent* BuildingComponent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ContactSphereComponent")
+	USphereComponent* ContactSphereComponent;
+
+	UPROPERTY()
+	TArray<AActor*> ContactActors;
+
+	UFUNCTION() 
+	void OnContactOverlapBegin(UPrimitiveComponent* OverlapedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 BodyIndex, bool Sweep, const FHitResult& Hit);
+
+	UFUNCTION() 
+	void OnContactOverlapEnd(UPrimitiveComponent* OverlapedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 BodyIndex);
 };
 

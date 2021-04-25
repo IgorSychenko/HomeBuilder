@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "BuildingComponent.generated.h"
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HOMEBUILDER_API UBuildingComponent : public UActorComponent
 {
@@ -21,7 +20,10 @@ protected:
 	float ProgressCompleteTime = 2.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BuildingComponent|Construct", meta = (ClampMin = "0", UIMin = "0"))
-	float OffsetConstructPosition = 50.0f;
+	float OffsetConstructPosition = 100.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BuildingComponent|Construct", meta = (ClampMin = "0", UIMin = "0"))
+	int32 ConstructCost = 10;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BuildingComponent|Construct")
 	TSubclassOf<AActor> ConstructActorClass;
@@ -48,6 +50,12 @@ public:
 	FORCEINLINE float GetProgress() const { return Progress; }
 
 	UFUNCTION(BlueprintPure, Category = "BuildingComponent|Construct")
-    FORCEINLINE bool IsInProgress() const { return bIsInProgress; }
+	FORCEINLINE bool IsInProgress() const { return bIsInProgress; }
+
+	UFUNCTION(BlueprintPure, Category = "BuildingComponent|Construct")
+	FORCEINLINE int32 GetConstructCost() const { return ConstructCost; }
+
+	UFUNCTION(BlueprintPure, Category = "BuildingComponent|Construct")
+	bool CanStartConstruct() const;
 		
 };

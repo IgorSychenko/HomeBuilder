@@ -2,6 +2,8 @@
 
 
 #include "BuildingComponent.h"
+#include "ResourceComponent.h"
+#include "HomeBuilder/Interfaces/ResourceComponentSupport.h"
 
 // Sets default values for this component's properties
 UBuildingComponent::UBuildingComponent()
@@ -28,9 +30,13 @@ void UBuildingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 void UBuildingComponent::StartConstruct()
 {
 	if (!ConstructActorClass) return;
-	
-	if (!IsInProgress())
+	if (IsInProgress()) return;
+	if (!CanStartConstruct()) return;
+
+	if (const auto ResourceComponent = IResourceComponentSupport::Execute_GetResourceComponent(GetOwner()))
 	{
+		ResourceComponent->ChangeCurrentResource(-GetConstructCost());
+
 		bIsInProgress = true;
 	}
 }
@@ -40,8 +46,19 @@ void UBuildingComponent::StopConstruct()
 	if (IsInProgress())
 	{
 		bIsInProgress = false;
+		
 		Progress = 0.0f;
 	}
+}
+
+bool UBuildingComponent::CanStartConstruct() const
+{
+	if (const auto ResourceComponent = IResourceComponentSupport::Execute_GetResourceComponent(GetOwner()))
+	{
+		return ResourceComponent->GetCurrentResource() >= GetConstructCost();		
+	}
+	
+	return false;
 }
 
 void UBuildingComponent::CreateConstruct()

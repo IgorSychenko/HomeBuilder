@@ -85,6 +85,7 @@ void AHomeBuilderCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AHomeBuilderCharacter::OnResetVR);
 	
 	PlayerInputComponent->BindAction("TakeResource", IE_Pressed, this, &AHomeBuilderCharacter::TakeResource);
+	PlayerInputComponent->BindAction("ConstructHome", IE_Pressed, this, &AHomeBuilderCharacter::ConstructHome);
 }
 
 
@@ -95,12 +96,16 @@ void AHomeBuilderCharacter::OnResetVR()
 
 void AHomeBuilderCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
+	if (GetBuildingComponent()->IsInProgress()) return;
+		
 	Jump();
 }
 
 void AHomeBuilderCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
 {
-		StopJumping();
+	if (GetBuildingComponent()->IsInProgress()) return;
+	
+	StopJumping();
 }
 
 void AHomeBuilderCharacter::TurnAtRate(float Rate)
@@ -117,6 +122,8 @@ void AHomeBuilderCharacter::LookUpAtRate(float Rate)
 
 void AHomeBuilderCharacter::MoveForward(float Value)
 {
+	if (GetBuildingComponent()->IsInProgress()) return;
+	
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
 		// find out which way is forward
@@ -131,6 +138,8 @@ void AHomeBuilderCharacter::MoveForward(float Value)
 
 void AHomeBuilderCharacter::MoveRight(float Value)
 {
+	if (GetBuildingComponent()->IsInProgress()) return;
+	
 	if ( (Controller != NULL) && (Value != 0.0f) )
 	{
 		// find out which way is right
@@ -194,4 +203,9 @@ void AHomeBuilderCharacter::TakeResource()
 			}
 		}
 	}
+}
+
+void AHomeBuilderCharacter::ConstructHome()
+{
+	GetBuildingComponent()->StartConstruct();
 }

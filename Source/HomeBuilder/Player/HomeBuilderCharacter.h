@@ -92,6 +92,9 @@ public:
 	void TakeResource();
 	
 	UFUNCTION(BlueprintCallable, Category = "HomeBuilderCharacter|ResourceComponent")
+	void ConstructHome();
+	
+	UFUNCTION(BlueprintCallable, Category = "HomeBuilderCharacter|ResourceComponent")
 	FORCEINLINE bool CanTakeResource() { return ContactActors.Num() > 0; }
 
 	UPROPERTY(BlueprintAssignable, Category = "ContactSphereComponent")

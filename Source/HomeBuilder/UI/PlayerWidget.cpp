@@ -18,6 +18,8 @@ bool UPlayerWidget::Initialize()
 			auto OwnerResourceComponent = IResourceComponentSupport::Execute_GetResourceComponent(Character);
 			OwnerResourceComponent->OnResourceChange.AddDynamic(this, &UPlayerWidget::UpdateWidget);
 
+			Character->GetBuildingComponent()->OnStartConstruct.AddDynamic(this, &UPlayerWidget::UpdateWidget);
+
 			Character->OnContactArrayChanged.AddDynamic(this, &UPlayerWidget::UpdateWidget);
 			
 			TakeResource->OnClicked.AddDynamic(this, &UPlayerWidget::OnTakeResourceClicked);
@@ -74,6 +76,16 @@ void UPlayerWidget::UpdateWidget()
 		GetOwningPlayer()->bShowMouseCursor = bShowMouse;
 		GetOwningPlayer()->bEnableClickEvents = bShowMouse;
 		GetOwningPlayer()->bEnableMouseOverEvents = bShowMouse;
+
+		if (Character->GetBuildingComponent()->IsInProgress())
+		{
+			ConstructProgressText->SetText(FText::FromString(TEXT("Constructing...")));
+			ConstructProgressText->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+		{
+			ConstructProgressText->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 }
 

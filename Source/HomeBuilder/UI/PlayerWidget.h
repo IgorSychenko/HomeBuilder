@@ -45,6 +45,9 @@ protected:
 	UFUNCTION()
 	void OnConstructHomeClicked();
 
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* ConstructProgressText;
+
 private:
 	UPROPERTY()
 	AHomeBuilderCharacter* Character;

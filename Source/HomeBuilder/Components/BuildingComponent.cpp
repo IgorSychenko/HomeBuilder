@@ -4,6 +4,7 @@
 #include "BuildingComponent.h"
 #include "ResourceComponent.h"
 #include "HomeBuilder/Interfaces/ResourceComponentSupport.h"
+#include "HomeBuilder/Player/HomeBuilderCharacter.h"
 
 // Sets default values for this component's properties
 UBuildingComponent::UBuildingComponent()
@@ -38,6 +39,8 @@ void UBuildingComponent::StartConstruct()
 		ResourceComponent->ChangeCurrentResource(-GetConstructCost());
 
 		bIsInProgress = true;
+
+		OnStartConstruct.Broadcast();
 	}
 }
 

@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "BuildingComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStartConstruct);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HOMEBUILDER_API UBuildingComponent : public UActorComponent
 {
@@ -50,6 +52,9 @@ public:
 	FORCEINLINE float GetProgress() const { return Progress; }
 
 	UFUNCTION(BlueprintPure, Category = "BuildingComponent|Construct")
+	FORCEINLINE float GetProgressRatio() const { return ProgressCompleteTime > 0 ? static_cast<float>(Progress) / static_cast<float>(ProgressCompleteTime) : 1.f; }
+
+	UFUNCTION(BlueprintPure, Category = "BuildingComponent|Construct")
 	FORCEINLINE bool IsInProgress() const { return bIsInProgress; }
 
 	UFUNCTION(BlueprintPure, Category = "BuildingComponent|Construct")
@@ -57,5 +62,8 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "BuildingComponent|Construct")
 	bool CanStartConstruct() const;
+
+	UPROPERTY(BlueprintAssignable, Category = "ResourceComponent|Resource")
+	FStartConstruct OnStartConstruct;
 		
 };

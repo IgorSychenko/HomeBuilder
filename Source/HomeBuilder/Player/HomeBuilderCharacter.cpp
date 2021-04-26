@@ -51,7 +51,10 @@ AHomeBuilderCharacter::AHomeBuilderCharacter()
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
 	ResourceComponent = CreateDefaultSubobject<UResourceComponent>(TEXT("ResourceComponent"));
+	ResourceComponent->ChangeCurrentResource(10);
+	
 	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>(TEXT("BuildingComponent"));
+	
 	ContactSphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("ContactSphereComponent"));
 	ContactSphereComponent->SetupAttachment(RootComponent); 
 }
@@ -63,8 +66,8 @@ void AHomeBuilderCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 {
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	//PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AHomeBuilderCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AHomeBuilderCharacter::MoveRight);

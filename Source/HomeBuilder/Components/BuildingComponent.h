@@ -39,8 +39,13 @@ private:
 	bool bIsInProgress = false;
 
 public:	
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	UFUNCTION(BlueprintPure, Category = "BuildingComponent|Construct")
+	FVector GetRelativeLocation() const;
+	
+	UFUNCTION(BlueprintPure, Category = "BuildingComponent|Construct")
+	FVector GetSpawnLocation() const;
 
 	UFUNCTION(BlueprintCallable, Category = "BuildingComponent|Construct")
 	void StartConstruct();

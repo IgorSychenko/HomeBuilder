@@ -18,7 +18,7 @@ bool UPlayerWidget::Initialize()
 			auto OwnerResourceComponent = IResourceComponentSupport::Execute_GetResourceComponent(Character);
 			OwnerResourceComponent->OnResourceChange.AddDynamic(this, &UPlayerWidget::UpdateWidget);
 
-			Character->GetBuildingComponent()->OnStartConstruct.AddDynamic(this, &UPlayerWidget::UpdateWidget);
+			IBuildingComponentSupport::Execute_GetBuildingComponent(Character)->OnStartConstruct.AddDynamic(this, &UPlayerWidget::UpdateWidget);
 
 			Character->OnContactArrayChanged.AddDynamic(this, &UPlayerWidget::UpdateWidget);
 			
@@ -57,7 +57,7 @@ void UPlayerWidget::UpdateWidget()
 			TakeResource->SetVisibility(ESlateVisibility::Hidden);
 		}
 
-		if (Character->GetBuildingComponent()->CanStartConstruct())
+		if (IBuildingComponentSupport::Execute_GetBuildingComponent(Character)->CanStartConstruct())
 		{
 			ConstructHome->SetVisibility(ESlateVisibility::Visible);
 
@@ -68,7 +68,7 @@ void UPlayerWidget::UpdateWidget()
 			ConstructHome->SetVisibility(ESlateVisibility::Hidden);
 		}
 
-		if (Character->CanTakeResource() || Character->GetBuildingComponent()->CanStartConstruct())
+		if (Character->CanTakeResource() || IBuildingComponentSupport::Execute_GetBuildingComponent(Character)->CanStartConstruct())
 		{
 			bShowMouse = true;
 		}
@@ -76,16 +76,6 @@ void UPlayerWidget::UpdateWidget()
 		GetOwningPlayer()->bShowMouseCursor = bShowMouse;
 		GetOwningPlayer()->bEnableClickEvents = bShowMouse;
 		GetOwningPlayer()->bEnableMouseOverEvents = bShowMouse;
-
-		if (Character->GetBuildingComponent()->IsInProgress())
-		{
-			ConstructProgressText->SetText(FText::FromString(TEXT("Constructing...")));
-			ConstructProgressText->SetVisibility(ESlateVisibility::Visible);
-		}
-		else
-		{
-			ConstructProgressText->SetVisibility(ESlateVisibility::Hidden);
-		}
 	}
 }
 
@@ -96,5 +86,5 @@ void UPlayerWidget::OnTakeResourceClicked()
 
 void UPlayerWidget::OnConstructHomeClicked()
 {
-	Character->GetBuildingComponent()->StartConstruct();
+	IBuildingComponentSupport::Execute_GetBuildingComponent(Character)->StartConstruct();
 }

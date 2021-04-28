@@ -28,6 +28,26 @@ void UBuildingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	}
 }
 
+FVector UBuildingComponent::GetRelativeLocation() const
+{
+	return GetSpawnLocation() - GetOwner()->GetActorLocation();
+}
+
+FVector UBuildingComponent::GetSpawnLocation() const
+{
+	FVector SpawnLocation = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * OffsetConstructPosition;
+	FHitResult OutHit;
+	const FVector Start = SpawnLocation;
+	const FVector End = Start + FVector(0.0f, 0.0f, -1000.0f);
+
+	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_Pawn, FCollisionQueryParams()))
+	{
+		SpawnLocation = OutHit.Location;
+	}
+
+	return SpawnLocation;
+}
+
 void UBuildingComponent::StartConstruct()
 {
 	if (!ConstructActorClass) return;
@@ -74,16 +94,7 @@ void UBuildingComponent::CreateConstruct()
 		SpawnParams.Owner = GetOwner();
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		// Find location
-		FVector SpawnLocation = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * OffsetConstructPosition;
-		FHitResult OutHit;
-		const FVector Start = SpawnLocation;
-		const FVector End = Start + FVector(0.0f, 0.0f, -1000.0f);
-
-		if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_Pawn, FCollisionQueryParams()))
-		{
-			SpawnLocation = OutHit.Location;
-		}
+		const FVector SpawnLocation = GetSpawnLocation();
 		
 		AActor* NewActor = GetWorld()->SpawnActor<AActor>(ConstructActorClass, SpawnLocation, GetOwner()->GetActorRotation(), SpawnParams);
 		if (!NewActor)

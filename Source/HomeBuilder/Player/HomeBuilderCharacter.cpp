@@ -56,7 +56,7 @@ AHomeBuilderCharacter::AHomeBuilderCharacter()
 	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>(TEXT("BuildingComponent"));
 	
 	ContactSphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("ContactSphereComponent"));
-	ContactSphereComponent->SetupAttachment(RootComponent); 
+	ContactSphereComponent->SetupAttachment(RootComponent);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -99,14 +99,14 @@ void AHomeBuilderCharacter::OnResetVR()
 
 void AHomeBuilderCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
-	if (GetBuildingComponent()->IsInProgress()) return;
+	if (IBuildingComponentSupport::Execute_GetBuildingComponent(this)->IsInProgress()) return;
 		
 	Jump();
 }
 
 void AHomeBuilderCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
 {
-	if (GetBuildingComponent()->IsInProgress()) return;
+	if (IBuildingComponentSupport::Execute_GetBuildingComponent(this)->IsInProgress()) return;
 	
 	StopJumping();
 }
@@ -125,7 +125,7 @@ void AHomeBuilderCharacter::LookUpAtRate(float Rate)
 
 void AHomeBuilderCharacter::MoveForward(float Value)
 {
-	if (GetBuildingComponent()->IsInProgress()) return;
+	if (IBuildingComponentSupport::Execute_GetBuildingComponent(this)->IsInProgress()) return;
 	
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
@@ -141,7 +141,7 @@ void AHomeBuilderCharacter::MoveForward(float Value)
 
 void AHomeBuilderCharacter::MoveRight(float Value)
 {
-	if (GetBuildingComponent()->IsInProgress()) return;
+	if (IBuildingComponentSupport::Execute_GetBuildingComponent(this)->IsInProgress()) return;
 	
 	if ( (Controller != NULL) && (Value != 0.0f) )
 	{
@@ -167,6 +167,11 @@ void AHomeBuilderCharacter::BeginPlay()
 UResourceComponent* AHomeBuilderCharacter::GetResourceComponent_Implementation() const
 {
 	return ResourceComponent;
+}
+
+UBuildingComponent* AHomeBuilderCharacter::GetBuildingComponent_Implementation() const
+{
+	return BuildingComponent;
 }
 
 void AHomeBuilderCharacter::OnContactOverlapBegin(UPrimitiveComponent* OverlapedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 BodyIndex, bool Sweep, const FHitResult& Hit)
@@ -210,5 +215,5 @@ void AHomeBuilderCharacter::TakeResource()
 
 void AHomeBuilderCharacter::ConstructHome()
 {
-	GetBuildingComponent()->StartConstruct();
+	IBuildingComponentSupport::Execute_GetBuildingComponent(this)->StartConstruct();
 }

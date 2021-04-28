@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "HomeBuilder/Interfaces/ResourceComponentSupport.h"
+#include "HomeBuilder/Interfaces/BuildingComponentSupport.h"
 #include "HomeBuilderCharacter.generated.h"
 
 class USphereComponent;
@@ -17,6 +18,7 @@ UCLASS(config=Game)
 class AHomeBuilderCharacter
 	: public ACharacter
 	, public IResourceComponentSupport
+	, public IBuildingComponentSupport
 {
 	GENERATED_BODY()
 
@@ -86,7 +88,7 @@ public:
 	// IResourceComponentSupport End
 	
 	UFUNCTION(BlueprintPure, Category = "HomeBuilderCharacter|ResourceComponent")
-	FORCEINLINE UBuildingComponent* GetBuildingComponent() const { return BuildingComponent; }
+	virtual UBuildingComponent* GetBuildingComponent_Implementation() const override;
 	
 	UFUNCTION(BlueprintCallable, Category = "HomeBuilderCharacter|ResourceComponent")
 	void TakeResource();

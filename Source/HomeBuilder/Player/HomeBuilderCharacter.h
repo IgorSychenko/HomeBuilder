@@ -8,6 +8,7 @@
 #include "HomeBuilder/Interfaces/BuildingComponentSupport.h"
 #include "HomeBuilderCharacter.generated.h"
 
+class UBuildingGhostComponent;
 class USphereComponent;
 class UBuildingComponent;
 class UResourceComponent;
@@ -86,9 +87,11 @@ public:
 	// IResourceComponentSupport Begin
 	virtual UResourceComponent* GetResourceComponent_Implementation() const override;
 	// IResourceComponentSupport End
-	
-	UFUNCTION(BlueprintPure, Category = "HomeBuilderCharacter|ResourceComponent")
+
+	// IBuildingComponentSupport Begin
 	virtual UBuildingComponent* GetBuildingComponent_Implementation() const override;
+	virtual UBuildingGhostComponent* GetBuildingGhostComponent_Implementation() const override;
+	// IBuildingComponentSupport End
 	
 	UFUNCTION(BlueprintCallable, Category = "HomeBuilderCharacter|ResourceComponent")
 	void TakeResource();
@@ -108,6 +111,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BuildingComponent")
 	UBuildingComponent* BuildingComponent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BuildingGhostComponent")
+	UBuildingGhostComponent* BuildingGhostComponent;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ContactSphereComponent")
 	USphereComponent* ContactSphereComponent;

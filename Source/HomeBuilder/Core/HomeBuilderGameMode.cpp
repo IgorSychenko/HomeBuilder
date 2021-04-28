@@ -2,6 +2,7 @@
 
 #include "HomeBuilderGameMode.h"
 #include "HomeBuilder/Player/HomeBuilderCharacter.h"
+#include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
 AHomeBuilderGameMode::AHomeBuilderGameMode()
@@ -12,4 +13,13 @@ AHomeBuilderGameMode::AHomeBuilderGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+}
+
+void AHomeBuilderGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->bShowMouseCursor = true;
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->bEnableClickEvents = true;
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->bEnableMouseOverEvents = true;
 }

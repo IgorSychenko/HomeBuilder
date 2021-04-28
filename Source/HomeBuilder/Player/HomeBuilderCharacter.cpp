@@ -10,6 +10,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "HomeBuilder/Components/BuildingComponent.h"
+#include "HomeBuilder/Components/BuildingGhostComponent.h"
 #include "HomeBuilder/Components/ResourceComponent.h"
 #include "HomeBuilder/Interfaces/ResourceComponentSupport.h"
 
@@ -57,6 +58,9 @@ AHomeBuilderCharacter::AHomeBuilderCharacter()
 	
 	ContactSphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("ContactSphereComponent"));
 	ContactSphereComponent->SetupAttachment(RootComponent);
+	
+	BuildingGhostComponent = CreateDefaultSubobject<UBuildingGhostComponent>(TEXT("BuildingGhostComponent"));
+	BuildingGhostComponent->SetupAttachment(RootComponent);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -172,6 +176,11 @@ UResourceComponent* AHomeBuilderCharacter::GetResourceComponent_Implementation()
 UBuildingComponent* AHomeBuilderCharacter::GetBuildingComponent_Implementation() const
 {
 	return BuildingComponent;
+}
+
+UBuildingGhostComponent* AHomeBuilderCharacter::GetBuildingGhostComponent_Implementation() const
+{
+	return BuildingGhostComponent;
 }
 
 void AHomeBuilderCharacter::OnContactOverlapBegin(UPrimitiveComponent* OverlapedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 BodyIndex, bool Sweep, const FHitResult& Hit)

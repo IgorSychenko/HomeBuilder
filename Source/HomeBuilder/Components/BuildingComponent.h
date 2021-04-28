@@ -6,7 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "BuildingComponent.generated.h"
 
+class UBuildingGhostComponent;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStartConstruct);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEndConstruct);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HOMEBUILDER_API UBuildingComponent : public UActorComponent
@@ -17,9 +19,11 @@ public:
 	// Sets default values for this component's properties
 	UBuildingComponent();
 
+	virtual void BeginPlay() override;
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BuildingComponent|Construct", meta = (ClampMin = "0", UIMin = "0"))
-	float ProgressCompleteTime = 2.0f;
+	float ProgressCompleteTime = 4.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BuildingComponent|Construct", meta = (ClampMin = "0", UIMin = "0"))
 	float OffsetConstructPosition = 100.0f;
@@ -32,11 +36,6 @@ protected:
 
 	UFUNCTION()
 	void CreateConstruct();
-
-private:
-	float Progress = 0.0f;
-
-	bool bIsInProgress = false;
 
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -68,7 +67,22 @@ public:
 	UFUNCTION(BlueprintPure, Category = "BuildingComponent|Construct")
 	bool CanStartConstruct() const;
 
+	UFUNCTION(BlueprintPure, Category = "BuildingComponent|Construct")
+	bool IsPositionValid() const;
+
 	UPROPERTY(BlueprintAssignable, Category = "ResourceComponent|Resource")
 	FStartConstruct OnStartConstruct;
+
+	UPROPERTY(BlueprintAssignable, Category = "ResourceComponent|Resource")
+	FEndConstruct OnEndConstruct;
+
+
+private:
+	float Progress = 0.0f;
+
+	bool bIsInProgress = false;
+	
+	UPROPERTY()
+	UBuildingGhostComponent* BuildingGhostComponent;
 		
 };

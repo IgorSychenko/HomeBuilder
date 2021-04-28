@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "BuildingComponentSupport.generated.h"
 
+class UBuildingGhostComponent;
 class UBuildingComponent;
 
 // This class does not need to be modified.
@@ -26,4 +27,7 @@ class HOMEBUILDER_API IBuildingComponentSupport
 public:
 	UFUNCTION(BlueprintNativeEvent, Category = "BuildingComponent")
 	UBuildingComponent* GetBuildingComponent() const;
+	
+	UFUNCTION(BlueprintNativeEvent, Category = "BuildingComponent")
+	UBuildingGhostComponent* GetBuildingGhostComponent() const;
 };

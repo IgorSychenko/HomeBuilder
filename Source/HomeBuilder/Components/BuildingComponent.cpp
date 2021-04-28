@@ -2,7 +2,10 @@
 
 
 #include "BuildingComponent.h"
+
+#include "BuildingGhostComponent.h"
 #include "ResourceComponent.h"
+#include "HomeBuilder/Actors/HomeGhost.h"
 #include "HomeBuilder/Interfaces/ResourceComponentSupport.h"
 #include "HomeBuilder/Player/HomeBuilderCharacter.h"
 
@@ -10,6 +13,13 @@
 UBuildingComponent::UBuildingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+}
+
+void UBuildingComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	BuildingGhostComponent = IBuildingComponentSupport::Execute_GetBuildingGhostComponent(GetOwner());
 }
 
 // Called every frame
@@ -71,11 +81,22 @@ void UBuildingComponent::StopConstruct()
 		bIsInProgress = false;
 		
 		Progress = 0.0f;
+
+		OnEndConstruct.Broadcast();
 	}
+}
+
+bool UBuildingComponent::IsPositionValid() const
+{
+	if (!BuildingGhostComponent) return true;
+
+	return BuildingGhostComponent->GetHomeGhost()->CollisionActors.Num() == 0;
 }
 
 bool UBuildingComponent::CanStartConstruct() const
 {
+	if (!IsPositionValid()) return false;
+	
 	if (const auto ResourceComponent = IResourceComponentSupport::Execute_GetResourceComponent(GetOwner()))
 	{
 		return ResourceComponent->GetCurrentResource() >= GetConstructCost();		

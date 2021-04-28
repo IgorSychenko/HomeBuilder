@@ -44,13 +44,10 @@ void UPlayerWidget::UpdateWidget()
 		
 		const FString ResourceString = FString::Printf(TEXT("%i/%i"), OwnerResourceComponent->GetCurrentResource(), OwnerResourceComponent->GetMaxResource());
 		ResourceText->SetText(FText::FromString(ResourceString));
-
-		bool bShowMouse = false;
+		
 		if (Character->CanTakeResource())
 		{
 			TakeResource->SetVisibility(ESlateVisibility::Visible);
-
-			bShowMouse = true;
 		}
 		else
 		{
@@ -60,22 +57,11 @@ void UPlayerWidget::UpdateWidget()
 		if (IBuildingComponentSupport::Execute_GetBuildingComponent(Character)->CanStartConstruct())
 		{
 			ConstructHome->SetVisibility(ESlateVisibility::Visible);
-
-			bShowMouse = true;
 		}
 		else
 		{
 			ConstructHome->SetVisibility(ESlateVisibility::Hidden);
 		}
-
-		if (Character->CanTakeResource() || IBuildingComponentSupport::Execute_GetBuildingComponent(Character)->CanStartConstruct())
-		{
-			bShowMouse = true;
-		}
-
-		GetOwningPlayer()->bShowMouseCursor = bShowMouse;
-		GetOwningPlayer()->bEnableClickEvents = bShowMouse;
-		GetOwningPlayer()->bEnableMouseOverEvents = bShowMouse;
 	}
 }
 

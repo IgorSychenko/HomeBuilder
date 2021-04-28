@@ -30,8 +30,5 @@ public:
 
 	UFUNCTION() 
 	void OnCollisionOverlapEnd(UPrimitiveComponent* OverlapedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 BodyIndex);
-
-	UFUNCTION()
-	void UpdateMaterial();
-
+	
 };

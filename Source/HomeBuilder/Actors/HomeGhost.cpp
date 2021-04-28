@@ -4,6 +4,7 @@
 #include "HomeGhost.h"
 
 #include "HomeBuilder/Components/BuildingGhostComponent.h"
+#include "HomeBuilder/Player/HomeBuilderCharacter.h"
 
 // Sets default values
 AHomeGhost::AHomeGhost()
@@ -28,19 +29,28 @@ void AHomeGhost::BeginPlay()
 void AHomeGhost::OnCollisionOverlapBegin(UPrimitiveComponent* OverlapedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 BodyIndex, bool Sweep, const FHitResult& Hit)
 {
 	CollisionActors.AddUnique(OtherActor);
-	UpdateMaterial();
+	
+	if (auto BuildingGhostComponent = Cast<UBuildingGhostComponent>(GetParentComponent()))
+	{
+		if (Cast<AHomeBuilderCharacter>(BuildingGhostComponent->GetOwner()))
+		{
+			Cast<AHomeBuilderCharacter>(BuildingGhostComponent->GetOwner())->OnContactArrayChanged.Broadcast();			
+		}
+		BuildingGhostComponent->UpdateHomeGhost();
+	}
 }
 
 void AHomeGhost::OnCollisionOverlapEnd(UPrimitiveComponent* OverlapedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 BodyIndex)
 {
 	CollisionActors.Remove(OtherActor);
-	UpdateMaterial();
-}
-
-void AHomeGhost::UpdateMaterial()
-{
+	
 	if (auto BuildingGhostComponent = Cast<UBuildingGhostComponent>(GetParentComponent()))
 	{
+		if (Cast<AHomeBuilderCharacter>(BuildingGhostComponent->GetOwner()))
+		{
+			Cast<AHomeBuilderCharacter>(BuildingGhostComponent->GetOwner())->OnContactArrayChanged.Broadcast();			
+		}
+		
 		BuildingGhostComponent->UpdateHomeGhost();
 	}
 }

@@ -4,7 +4,9 @@
 #include "PlayerWidget.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "HomeBuilder/Actors/HomeGhost.h"
 #include "HomeBuilder/Components/BuildingComponent.h"
+#include "HomeBuilder/Components/BuildingGhostComponent.h"
 #include "HomeBuilder/Components/ResourceComponent.h"
 #include "HomeBuilder/Player/HomeBuilderCharacter.h"
 
@@ -15,18 +17,22 @@ bool UPlayerWidget::Initialize()
 		if (GetOwningPlayer())
 		{
 			Character = Cast<AHomeBuilderCharacter>(GetOwningPlayer()->GetCharacter());
-			auto OwnerResourceComponent = IResourceComponentSupport::Execute_GetResourceComponent(Character);
-			OwnerResourceComponent->OnResourceChange.AddDynamic(this, &UPlayerWidget::UpdateWidget);
 
-			IBuildingComponentSupport::Execute_GetBuildingComponent(Character)->OnStartConstruct.AddDynamic(this, &UPlayerWidget::UpdateWidget);
+			if (Character)
+			{
+				auto OwnerResourceComponent = IResourceComponentSupport::Execute_GetResourceComponent(Character);
+				OwnerResourceComponent->OnResourceChange.AddDynamic(this, &UPlayerWidget::UpdateWidget);
 
-			Character->OnContactArrayChanged.AddDynamic(this, &UPlayerWidget::UpdateWidget);
+				IBuildingComponentSupport::Execute_GetBuildingComponent(Character)->OnStartConstruct.AddDynamic(this, &UPlayerWidget::UpdateWidget);
+
+				Character->OnContactArrayChanged.AddDynamic(this, &UPlayerWidget::UpdateWidget);
 			
-			TakeResource->OnClicked.AddDynamic(this, &UPlayerWidget::OnTakeResourceClicked);
+				TakeResource->OnClicked.AddDynamic(this, &UPlayerWidget::OnTakeResourceClicked);
 			
-			ConstructHome->OnClicked.AddDynamic(this, &UPlayerWidget::OnConstructHomeClicked);
+				ConstructHome->OnClicked.AddDynamic(this, &UPlayerWidget::OnConstructHomeClicked);
 
-			UpdateWidget();
+				UpdateWidget();
+			}
 		}
 
 		return true;

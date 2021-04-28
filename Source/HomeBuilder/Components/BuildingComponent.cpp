@@ -50,7 +50,10 @@ FVector UBuildingComponent::GetSpawnLocation() const
 	const FVector Start = SpawnLocation;
 	const FVector End = Start + FVector(0.0f, 0.0f, -1000.0f);
 
-	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_Pawn, FCollisionQueryParams()))
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(IBuildingComponentSupport::Execute_GetBuildingGhostComponent(GetOwner())->GetHomeGhost());
+
+	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_Pawn, Params))
 	{
 		SpawnLocation = OutHit.Location;
 	}

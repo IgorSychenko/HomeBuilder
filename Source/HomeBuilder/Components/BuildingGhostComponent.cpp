@@ -32,9 +32,7 @@ void UBuildingGhostComponent::BeginPlay()
 }
 
 void UBuildingGhostComponent::UpdateHomeGhost()
-{
-	UE_LOG(LogTemp, Warning, TEXT("UBuildingGhostComponent::UpdateMaterial!"));
-	
+{	
 	if (GetOwner()->GetClass()->ImplementsInterface(UBuildingComponentSupport::StaticClass()))
 	{
 		if (const auto BuildingComponent = IBuildingComponentSupport::Execute_GetBuildingComponent(GetOwner()))

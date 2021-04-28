@@ -39,8 +39,6 @@ void AHomeGhost::OnCollisionOverlapEnd(UPrimitiveComponent* OverlapedComp, AActo
 
 void AHomeGhost::UpdateMaterial()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AHomeGhost::UpdateMaterial!"));
-	
 	if (auto BuildingGhostComponent = Cast<UBuildingGhostComponent>(GetParentComponent()))
 	{
 		BuildingGhostComponent->UpdateHomeGhost();

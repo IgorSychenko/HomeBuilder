@@ -92,6 +92,7 @@ void UBuildingComponent::StopConstruct()
 bool UBuildingComponent::IsPositionValid() const
 {
 	if (!BuildingGhostComponent) return true;
+	if (!BuildingGhostComponent->GetHomeGhost()) return false;
 
 	return BuildingGhostComponent->GetHomeGhost()->CollisionActors.Num() == 0;
 }

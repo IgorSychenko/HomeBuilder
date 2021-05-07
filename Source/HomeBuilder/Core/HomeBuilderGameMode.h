@@ -13,8 +13,6 @@ class AHomeBuilderGameMode : public AGameModeBase
 
 public:
 	AHomeBuilderGameMode();
-
-	virtual void BeginPlay() override;
 };
 
 
